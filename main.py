@@ -19,27 +19,29 @@ vocab_occurrences = {} # looks like {"lemma": int}
 for event in subs:
     if shouldProcess(event):
         text = event.plaintext
-        if text != "":
-            for word in tagger(text):
-                if word.feature.pos1 not in POS_EXCLUDES:
-                    try:
-                        lemma = word.feature.lemma
-                        if (lemma not in vocab_occurrences or
-                                vocab_occurrences[lemma] < VOCAB_MAX_APPEARANCES):
-                            definition = jmd.lookup(lemma)
-                            definition = definition.entries[0].senses[0]
-                            definition = ", ".join([str(term) for term in definition.gloss])
+        if text == "": break
 
-                            new_text = f"{word}\t{definition}"
-                            print("Inserting", new_text)
-                            subs.insert(-1, pysubs2.SSAEvent(start=event.start, end=event.end, text=new_text))
-                        else:
-                            print(f"Not inserting {word} because it appears too many times")
+        for word in tagger(text):
+            if word.feature.pos1 in POS_EXCLUDES: break
+            
+            try:
+                lemma = word.feature.lemma
+                if (lemma not in vocab_occurrences or
+                        vocab_occurrences[lemma] < VOCAB_MAX_APPEARANCES):
+                    definition = jmd.lookup(lemma)
+                    definition = definition.entries[0].senses[0]
+                    definition = ", ".join([str(term) for term in definition.gloss])
 
-                        if lemma in vocab_occurrences:
-                            vocab_occurrences[lemma] += 1
-                        else:
-                            vocab_occurrences[lemma] = 1
-                    except (IndexError, ValueError):
-                        print("Failed to get definition of", word)
+                    new_text = f"{word}\t{definition}"
+                    print("Inserting", new_text)
+                    subs.insert(-1, pysubs2.SSAEvent(start=event.start, end=event.end, text=new_text))
+                else:
+                    print(f"Not inserting {word} because it appears too many times")
+
+                if lemma in vocab_occurrences:
+                    vocab_occurrences[lemma] += 1
+                else:
+                    vocab_occurrences[lemma] = 1
+            except (IndexError, ValueError):
+                print("Failed to get definition of", word)
 subs.save(OUTPUT_FILE)
