@@ -5,7 +5,7 @@ from jamdict import Jamdict
 SUBTITLE_FILE = "test_anime.ass"
 OUTPUT_FILE = "test_anime_out.ass"
 POS_EXCLUDES = ["助詞", "助動詞", "空白"] # parts of speech to exclude
-VOCAB_MAX_APPEARANCES = 5 # after this number, stop showing its definition
+VOCAB_MAX_APPEARANCES = 9999 # after this number, stop showing its definition
 
 def should_process(event):
     """Return true if we want to generate a vocab list from this subtitle event
@@ -23,10 +23,10 @@ vocab_occurrences = {} # looks like {"lemma": int}
 for event in subs:
     if should_process(event):
         text = event.plaintext
-        if text == "": break
+        if text == "": continue
 
         for word in tagger(text):
-            if word.feature.pos1 in POS_EXCLUDES: break
+            if word.feature.pos1 in POS_EXCLUDES: continue
 
             try:
                 lemma = word.feature.lemma
