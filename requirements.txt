@@ -1,0 +1,7 @@
+chirptext==0.1a19
+fugashi==1.0.5
+jamdict==0.1a7
+lxml==4.6.2
+puchikarui==0.1a3
+pysubs2==1.0.0
+unidic-lite==1.0.7
