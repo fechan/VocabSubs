@@ -10,8 +10,11 @@ jmd = Jamdict()
 
 subs = pysubs2.load(SUBTITLE_FILE)
 
+def shouldProcess(event):
+    return event.style == "JP"
+
 for event in subs:
-    if event.style == "JP": # TODO: this is subtitle specific; should make a more flexible filter
+    if shouldProcess(event):
         text = event.plaintext
         if text != "":
             for word in tagger(text):
