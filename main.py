@@ -7,7 +7,11 @@ OUTPUT_FILE = "test_anime_out.ass"
 POS_EXCLUDES = ["助詞", "助動詞", "空白"] # parts of speech to exclude
 VOCAB_MAX_APPEARANCES = 5 # after this number, stop showing its definition
 
-def shouldProcess(event):
+def should_process(event):
+    """Return true if we want to generate a vocab list from this subtitle event
+
+    event -- pysubs2 subtitle event
+    """
     return event.style == "JP"
 
 tagger = Tagger("-Owakati")
@@ -17,13 +21,13 @@ subs = pysubs2.load(SUBTITLE_FILE)
 vocab_occurrences = {} # looks like {"lemma": int}
 
 for event in subs:
-    if shouldProcess(event):
+    if should_process(event):
         text = event.plaintext
         if text == "": break
 
         for word in tagger(text):
             if word.feature.pos1 in POS_EXCLUDES: break
-            
+
             try:
                 lemma = word.feature.lemma
                 if (lemma not in vocab_occurrences or
