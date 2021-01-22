@@ -4,7 +4,7 @@ from jamdict import Jamdict
 
 class VocabInjector:
     def __init__(self, pos_excludes = [], vocab_max_appearances = -1, appearances_carryover = False,
-            max_gloss_terms = -1, sub_filter = lambda x: True):
+            max_gloss_terms = -1, sub_filter = lambda x: True, lemma_excludes = []):
         """Construct a VocabInjector, used for injecting vocab lists into subtitle files
 
         Keyword arguments:
@@ -13,12 +13,14 @@ class VocabInjector:
         appearances_carryover -- whether the # of appearances a word has should carry over multiple files (default: False)
         max_gloss_terms -- max # of terms in a definition ("する: to do, to wear" has 2 terms) (default: no maximum)
         sub_filter -- function determining if a subtitle event should be processed (default: accept everyting)
+        lemma_excludes -- lemmas to exclude from being defined (default: exclude nothing)
         """
         self.pos_excludes = pos_excludes
         self.vocab_max_appearances = vocab_max_appearances
         self.appearances_carryover = appearances_carryover
         self.max_gloss_terms = max_gloss_terms
         self.sub_filter = sub_filter
+        self.lemma_excludes = lemma_excludes
 
         self.vocab_occurrences = {} # looks like {"lemma": int}
         self.vocab_cache = {} # looks like {"lemma": "definition"}
@@ -44,7 +46,9 @@ class VocabInjector:
 
                     try:
                         lemma = word.feature.lemma
-                        if lemma in event_seen_words:
+                        if lemma in self.lemma_excludes:
+                            print(f"Skipping {word} because its lemma ({lemma}) appears in the lemma exclude list")
+                        elif lemma in event_seen_words:
                             print(f"Skipping {word} because it appears more than once in this event")
                         elif (self.vocab_max_appearances > -1 and # -1 for no maximum
                                 lemma in self.vocab_occurrences and # lemma has appeared
