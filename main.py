@@ -19,6 +19,7 @@ jmd = Jamdict()
 
 subs = pysubs2.load(SUBTITLE_FILE)
 vocab_occurrences = {} # looks like {"lemma": int}
+vocab_cache = {} # looks like {"lemma": "definition"}
 
 for event in subs:
     if should_process(event):
@@ -33,9 +34,13 @@ for event in subs:
                 lemma = word.feature.lemma
                 if (lemma not in event_seen_words and (lemma not in vocab_occurrences or
                         vocab_occurrences[lemma] < VOCAB_MAX_APPEARANCES)):
-                    definition = jmd.lookup(lemma)
-                    definition = definition.entries[0].senses[0]
-                    definition = ", ".join([str(term) for term in definition.gloss])
+                    if lemma in vocab_cache:
+                        definition = vocab_cache[lemma]
+                    else:
+                        definition = jmd.lookup(lemma)
+                        definition = definition.entries[0].senses[0]
+                        definition = ", ".join([str(term) for term in definition.gloss])
+                        vocab_cache[lemma] = definition
 
                     new_text = f"{word}\t{definition}"
                     print("Inserting", new_text)
