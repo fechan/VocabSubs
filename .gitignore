@@ -1,3 +1,4 @@
 *.ass
 *.mkv
 venv/
+__pycache__/
