@@ -81,3 +81,12 @@ class VocabInjector:
         subs.save(output_file)
         if not self.appearances_carryover:
             self.vocab_occurrences = {}
+
+    def add_definition(self, lemma, definition):
+        """Add a lemma and its definition to the vocab cache.
+        This will force the injector to use the added definition rather than the one in the database
+        
+        lemma -- the lemma to be defined
+        definition -- the definition of the lemma
+        """
+        self.vocab_cache[lemma] = definition
