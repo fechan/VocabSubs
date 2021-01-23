@@ -91,3 +91,11 @@ class VocabInjector:
         definition -- the definition of the lemma
         """
         self.vocab_cache[lemma] = definition
+
+    def set_lemma_excludes(self, lemma_excludes):
+        """Set the lemma exclude list.
+        The injector will not define lemmas included in the exclude list.
+
+        lemma_excludes -- list of lemmas to exclude
+        """
+        self.lemma_excludes = set(lemma_excludes)
