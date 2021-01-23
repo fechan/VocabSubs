@@ -20,7 +20,7 @@ class VocabInjector:
         self.appearances_carryover = appearances_carryover
         self.max_gloss_terms = max_gloss_terms
         self.sub_filter = sub_filter
-        self.lemma_excludes = lemma_excludes
+        self.lemma_excludes = set(lemma_excludes)
 
         self.vocab_occurrences = {} # looks like {"lemma": int}
         self.vocab_cache = {} # looks like {"lemma": "definition"}
