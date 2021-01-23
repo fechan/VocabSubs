@@ -85,6 +85,7 @@ class VocabInjector:
     def add_definition(self, lemma, definition):
         """Add a lemma and its definition to the vocab cache.
         This will force the injector to use the added definition rather than the one in the database
+        and will be exempt from being shortened by max_gloss_terms
         
         lemma -- the lemma to be defined
         definition -- the definition of the lemma
