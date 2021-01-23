@@ -1,4 +1,5 @@
 import pysubs2
+import re
 from fugashi import Tagger
 from jamdict import Jamdict
 
@@ -59,12 +60,14 @@ class VocabInjector:
                                 definition = self.vocab_cache[lemma]
                             else:
                                 definition = self.jmd.lookup(lemma)
-                                definition = definition.entries[0].senses[0]
+                                definition = definition.entries[0].senses[0] # get first sense of first entry
                                 if self.max_gloss_terms > -1:
-                                    definition = definition.gloss[:self.max_gloss_terms]
+                                    definition = definition.gloss[:self.max_gloss_terms] # if set, limit # of terms in gloss
                                 else:
                                     definition = definition.gloss
                                 definition = ", ".join([str(term) for term in definition])
+                                if not re.match("^[ぁ-んァ-ン]+$", str(word)): # if there's any non-kana in the word
+                                    definition = f"({word.feature.pron}) {definition}" # add the pronunciation
                                 self.vocab_cache[lemma] = definition
 
                             new_text = f"{word}\t{definition}"

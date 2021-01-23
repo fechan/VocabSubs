@@ -23,9 +23,11 @@ lemma_excludes = ["楽"]
 with open("genki_vocab.json") as f:
     genki_vocab = json.load(f)
     for word in genki_vocab:
-        lemma = word["Kanji"] if len(word["Kanji"]) > 0 else word["Kana"]
+        has_kanji = len(word["Kanji"]) > 0
+        lemma = word["Kanji"] if has_kanji else word["Kana"]
         lemma = lemma.replace("〜", "")
-        injector.add_definition(lemma, word["Meaning"])
+        meaning = word["Meaning"]
+        injector.add_definition(lemma, f"({word['Kana']}) {meaning}" if has_kanji else meaning)
         if word["Lesson"] <= LAST_GENKI_LESSON:
             lemma_excludes.append(lemma)
 
